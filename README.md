@@ -21,6 +21,7 @@ The C++ implementation of SE-Sync can be built and exported as a CMake project. 
 
 #### C++ quick installation guide
 
+### Linux
 The following installation instructions have been verified on Ubuntu 22.04:
 
 *Step 1:*  Install dependencies
@@ -61,13 +62,124 @@ $ cd bin
 $ ./SE-Sync ../../../data/sphere2500.g2o 
 ```
 
+### Mac
+The following installation instructions have been verified on MacOS 14.3.1
+
+Step 1: Install dependencies
+```
+brew install cmake eigen gmp metis gcc
+```
+
+Step 2: Create a new folder 
+```
+mkdir SE-Sync && cd SE-Sync
+```
+
+Step 3: Install older version SuiteSparse package
+```
+curl -LO https://github.com/DrTimothyAldenDavis/SuiteSparse/archive/refs/tags/v5.10.1.tar.gz
+
+tar -xzf v5.10.1.tar.gz
+
+cd SuiteSparse-5.10.1
+```
+
+Step 4: Compile SuiteSparse
+```
+CMAKE_OPTIONS="-DCMAKE_POLICY_VERSION_MINIMUM=3.5" make library \ BLAS="-framework Accelerate" \ LAPACK="-framework Accelerate" \ MY_METIS_LIB="-L$(brew --prefix)/lib -lmetis" \ MY_METIS_INC="$(brew --prefix)/include" \ CFLAGS="-I$(brew --prefix)/include" \ LDFLAGS="-L$(brew --prefix)/lib -L$PWD/lib" \ INSTALL=$PWD
+```
+
+```
+make install \ INSTALL=$PWD \ BLAS="-framework Accelerate" \ LAPACK="-framework Accelerate" \ MY_METIS_LIB="-L$(brew --prefix)/lib -lmetis" \ MY_METIS_INC="$(brew --prefix)/include" \ CFLAGS="-I$(brew --prefix)/include" \ LDFLAGS="-L$(brew --prefix)/lib"
+```
+
+You may get an error that looks like this
+
+```
+CMake Error at cmake_install.cmake:41 (file):
+  file INSTALL cannot copy file
+  "/Users/natashanicholas/Desktop/shanefolder/SuiteSparse-5.10.1/GraphBLAS/build/libgraphblas.5.0.5.dylib"
+  to "/usr/local/lib/libgraphblas.5.0.5.dylib": Permission denied.
+make[2]: *** [install] Error 1
+make[1]: *** [install] Error 2
+make: *** [install] Error 2
+```
+You can ignore this, to ensure that the make command was successful run the following command
+```
+ls include | grep -i spqr
+```
+You should see something like this 
+```
+spqr.hpp
+```
+
+Also run this command 
+```
+ls lib | grep -i spqr
+```
+You should see something like this
+```
+libspqr.2.0.9.dylib
+libspqr.2.dylib
+libspqr.dylib
+```
+
+Step 5: Clone SE-Sync repo
+```
+cd ..
+git clone https://github.com/david-m-rosen/SE-Sync.git
+```
+
+Step 6: Initialize Git submodules
+```
+cd SE-Sync
+git submodule init
+git submodule update
+```
+
+Step 7: Create build directory
+```
+cd C++ && mkdir build
+cd build
+```
+
+Step 8: Configure build and generate Makefiles
+```
+cmake .. -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DCMAKE_C_COMPILER=$(brew --prefix gcc)/bin/gcc-15 -DCMAKE_CXX_COMPILER=$(brew --prefix gcc)/bin/g++-15 -DCMAKE_PREFIX_PATH="$(brew --prefix eigen);$PWD/../../../SuiteSparse-5.10.1;$(brew --prefix llvm);$(brew --prefix openblas)" -DCMAKE_CXX_FLAGS="-I$PWD/../../../SuiteSparse-5.10.1/include" -DCMAKE_BUILD_TYPE=Release
+```
+
+Step 9: Build code
+```
+make -j$(sysctl -n hw.logicalcpu)
+```
+
+*Step 10:*  Run the example command-line utility on some tasty data :-D!
+```
+$ cd bin
+$ ./SE-Sync ../../../data/sphere2500.g2o 
+```
+
+
+
+
 ### Python
 
 Python bindings for the C++ SE-Sync library can also be built using [pybind11](https://pybind11.readthedocs.io/en/stable/index.html).  To do so, install the additional Python dependencies using the command:
 
+### Linux
+
 ```
 $ sudo apt-get install python3 python3-numpy python3-matplotlib python3-dev pybind11-dev jupyter-notebook 
 ```
+
+### Mac
+
+```
+brew install pybind11
+pip3 install numpy matplotlib jupyter notebook
+```
+
+
 
 and then set `BUILD_PYTHON_BINDINGS` when configuring the CMake project.  See this [notebook](https://github.com/david-m-rosen/SE-Sync/blob/master/C%2B%2B/examples/PySESync.ipynb) for a minimal working example demonstrating the use of SE-Sync's Python interface.
 
