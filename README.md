@@ -64,7 +64,8 @@ $ ./SE-Sync ../../../data/sphere2500.g2o
 
 ### Mac
 The following installation instructions have been verified on Sequoia 15.6:
-*step 1:* Create a conda environment 
+
+*Step 1:* Create a conda environment 
 ```
 conda create -n sesync python=3.12 -y
 ```
@@ -78,7 +79,7 @@ conda config --env --add channels conda-forge
 conda config --env --set channel_priority strict
 ```
 
-*step 2:* Add the appropriate packages
+*Step 2:* Add the appropriate packages
 ```
 conda install -y suitesparse=5.10 eigen llvm-openmp pybind11 numpy
 ```
@@ -86,12 +87,12 @@ conda install -y suitesparse=5.10 eigen llvm-openmp pybind11 numpy
 brew install gcc cmake
 ```
 
-*step 3: Clone the repository*
+*Step 3: Clone the repository*
 ```
 git clone https://github.com/david-m-rosen/SE-Sync.git
 ```
 
-*step 4: Initialize Git submodules*
+*Step 4: Initialize Git submodules*
 ```
 cd SE-Sync
 git submodule init
@@ -115,8 +116,8 @@ make -j$(sysctl -n hw.logicalcpu)
 
 *Step 8:*  Run the example command-line utility on some tasty data :-D!
 ```
-$ cd bin
-$ ./SE-Sync ../../../data/sphere2500.g2o 
+cd bin
+./SE-Sync ../../../data/sphere2500.g2o 
 ```
  
 
